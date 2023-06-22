@@ -2,6 +2,8 @@ package com.arzoo.login;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @SpringBootApplication
 public class LoginApplication {
@@ -10,4 +12,8 @@ public class LoginApplication {
 		SpringApplication.run(LoginApplication.class, args);
 	}
 
+	@Bean
+	public BCryptPasswordEncoder passwordEncoder() {
+		return new BCryptPasswordEncoder();
+	}
 }
