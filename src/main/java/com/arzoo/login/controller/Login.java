@@ -4,11 +4,16 @@ package com.arzoo.login.controller;
 import com.arzoo.login.domain.User;
 import com.arzoo.login.repo.UserRepo;
 import com.arzoo.login.service.UserService;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.util.JSONPObject;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @Slf4j
@@ -26,34 +31,40 @@ public class Login {
 
     private String response;
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User  user){
+    public ResponseEntity<Map<String,String>> registerUser(@RequestBody User  user){
         log.info("yay");
-        String res="";
+        String res="";Map<String,String> r1=new HashMap<>();
         User existingUser = userRepo.findByUsername(user.getUsername());
         if(existingUser!=null){
             res="User alredy exsists";
-            return ResponseEntity.badRequest().body(res);
+            r1.put("msg",res);
+            return ResponseEntity.badRequest().body(r1);
         }
 
         userService.registerUser(user);
         res="User Registered";
-        return ResponseEntity.ok().body(res);
+        r1.put("msg",res);
+        return ResponseEntity.ok().body(r1);
     }
     @PostMapping ("/login")
-    public ResponseEntity<String> loginUser(@RequestBody User user){
+    public ResponseEntity<Map<String,String>> loginUser(@RequestBody User user){
         log.info("inside login api");
+        Map<String,String> r1=new HashMap<>();
         User existingUser= userRepo.findByUsername(user.getUsername());
         if(existingUser==null){
             response="User is not Registered";
-            return ResponseEntity.badRequest().body(response);
+            r1.put("msg",response);
+            return ResponseEntity.badRequest().body(r1);
         }
 
         if(encoder.matches(user.getPassword(), existingUser.getPassword())) {
             response="Login Successful";
-            return ResponseEntity.ok().body(response);
+            r1.put("msg",response);
+            return ResponseEntity.ok().body(r1);
         }
         response="Chack Credentials";
-        return ResponseEntity.badRequest().body(response);
+        r1.put("msg",response);
+        return ResponseEntity.badRequest().body(r1);
     }
 
 
