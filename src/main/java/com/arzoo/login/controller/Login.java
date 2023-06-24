@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @Slf4j
 @RequestMapping("/user")
+@CrossOrigin("*")
 public class Login {
     @Autowired
     private UserRepo userRepo;
@@ -23,27 +24,36 @@ public class Login {
     BCryptPasswordEncoder encoder;
 
 
-
+    private String response;
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user){
+    public ResponseEntity<String> registerUser(@RequestBody User  user){
         log.info("yay");
+        String res="";
         User existingUser = userRepo.findByUsername(user.getUsername());
         if(existingUser!=null){
-            return ResponseEntity.badRequest().body("User Already exist!!!!!!!");
+            res="User alredy exsists";
+            return ResponseEntity.badRequest().body(res);
         }
+
         userService.registerUser(user);
-        return ResponseEntity.ok("User Created withe username : "+user.getUsername());
+        res="User Registered";
+        return ResponseEntity.ok().body(res);
     }
     @PostMapping ("/login")
     public ResponseEntity<String> loginUser(@RequestBody User user){
         log.info("inside login api");
         User existingUser= userRepo.findByUsername(user.getUsername());
-        if(existingUser==null)
-            return ResponseEntity.badRequest().body("User is not Registered");
-        if(encoder.matches(user.getPassword(), existingUser.getPassword()))
-            return ResponseEntity.ok().body("Login Successful") ;
+        if(existingUser==null){
+            response="User is not Registered";
+            return ResponseEntity.badRequest().body(response);
+        }
 
-        return ResponseEntity.badRequest().body("Chack Credentials");
+        if(encoder.matches(user.getPassword(), existingUser.getPassword())) {
+            response="Login Successful";
+            return ResponseEntity.ok().body(response);
+        }
+        response="Chack Credentials";
+        return ResponseEntity.badRequest().body(response);
     }
 
 
