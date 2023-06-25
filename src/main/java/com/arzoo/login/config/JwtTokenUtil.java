@@ -24,15 +24,21 @@ public class JwtTokenUtil {
 	@Value("${jwt.exTime}")
 	private Long expiration;
 	
-	public String generateToken(UserDetails  user) {
+	 public String generateToken(String username, String role) {
+	        Map<String, Object> claims = new HashMap<>();
+	        claims.put("role", role);
+	        return createToken(claims, username);
+	    }
+	
+	public String createToken(Map<String, Object> claims, String username) {
 		
-		Map<String, Object> claims =new HashMap<>();
+		
 		String result= Jwts.builder()
 						.setClaims(claims)
-						.setSubject(user.getUsername())
+						.setSubject(username)
 						.setIssuedAt(new Date(System.currentTimeMillis()))
 						.setExpiration(new Date(System.currentTimeMillis()+expiration))
-						.signWith(SignatureAlgorithm.ES512,salt)
+						.signWith(SignatureAlgorithm.ES256,salt)
 						.compact();
 				;
 		
