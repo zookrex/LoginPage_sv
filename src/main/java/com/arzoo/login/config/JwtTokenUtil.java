@@ -1,5 +1,9 @@
 package com.arzoo.login.config;
 
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.NoSuchAlgorithmException;
+import java.security.PrivateKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -19,26 +23,34 @@ import io.jsonwebtoken.SignatureAlgorithm;
 public class JwtTokenUtil {
 	
 	@Value("${jwt.salt}")
-	private String salt;
+	private  String salt;
 	
 	@Value("${jwt.exTime}")
 	private Long expiration;
 	
-	 public String generateToken(String username, String role) {
+	 public String generateToken(String username, String role) throws NoSuchAlgorithmException {
 	        Map<String, Object> claims = new HashMap<>();
 	        claims.put("role", role);
 	        return createToken(claims, username);
 	    }
+	 
+	 private  KeyPair generateKeyPair() throws NoSuchAlgorithmException {
+		 
+	        KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+	        generator.initialize(256);
+	        return generator.generateKeyPair();
+	    }
 	
-	public String createToken(Map<String, Object> claims, String username) {
-		
+	public String createToken(Map<String, Object> claims, String username) throws NoSuchAlgorithmException {
+		 KeyPair keyPair = generateKeyPair();
+	        PrivateKey privateKey = keyPair.getPrivate();
 		
 		String result= Jwts.builder()
 						.setClaims(claims)
 						.setSubject(username)
 						.setIssuedAt(new Date(System.currentTimeMillis()))
 						.setExpiration(new Date(System.currentTimeMillis()+expiration))
-						.signWith(SignatureAlgorithm.ES256,salt)
+						.signWith(privateKey, SignatureAlgorithm.ES256)
 						.compact();
 				;
 		

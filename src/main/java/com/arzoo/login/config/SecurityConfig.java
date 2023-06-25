@@ -7,13 +7,15 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
   
-	@Override
+    @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.csrf().disable()
             .authorizeRequests()
-                .anyRequest().authenticated()
-                .and()
-            .formLogin()
-                .disable(); // Disable default login form
+            .antMatchers("/login", "/register").permitAll() // Allow access to "/login" and "/register" without authentication
+            .anyRequest().authenticated()
+            
+            .and()
+            .httpBasic();
     }
+
 }

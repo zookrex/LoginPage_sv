@@ -1,6 +1,8 @@
 package com.arzoo.login.controller;
 
 
+import java.security.NoSuchAlgorithmException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,7 +37,7 @@ public class AuthController {
 	}
 	
 	@PostMapping("/login")
-	public ResponseEntity<String> login (@RequestBody User user){
+	public ResponseEntity<String> login (@RequestBody User user) throws NoSuchAlgorithmException{
 		if(authService.authenticateUser(user)) {
 			String role=authService.getUserRole(user.getUsername());
 			String token= jwtTokenUtil.generateToken(user.getUsername(), role);
