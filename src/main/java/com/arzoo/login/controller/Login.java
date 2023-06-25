@@ -32,7 +32,7 @@ public class Login {
     private String response;
     @PostMapping("/register")
     public ResponseEntity<Map<String,String>> registerUser(@RequestBody User  user){
-        log.info("yay");
+ //       log.info("yay");
         String res="";Map<String,String> r1=new HashMap<>();
         User existingUser = userRepo.findByUsername(user.getUsername());
         if(existingUser!=null){
@@ -48,7 +48,7 @@ public class Login {
     }
     @PostMapping ("/login")
     public ResponseEntity<Map<String,String>> loginUser(@RequestBody User user){
-        log.info("inside login api");
+//        log.info("inside login api");
         Map<String,String> r1=new HashMap<>();
         User existingUser= userRepo.findByUsername(user.getUsername());
         if(existingUser==null){
