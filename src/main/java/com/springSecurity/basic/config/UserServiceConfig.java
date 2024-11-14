@@ -27,6 +27,7 @@ public class UserServiceConfig implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username){
         User user=userRepo.findByUsername(username);
+        System.out.println("Username :"+user.getUsername());
 
         Set<GrantedAuthority> authorities=user.getRoles()
                 .stream().map(role -> new SimpleGrantedAuthority(role.getName()))
