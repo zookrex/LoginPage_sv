@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping(value = "/api")
-//@CrossOrigin(origins = "http://localhost:4200")
 public class UserController {
 
     private final UserRepo userRepo;
@@ -20,10 +19,9 @@ public class UserController {
         this.userRepo = userRepo;
 
     }
-
     @GetMapping("/api1")
-    public String hello() {
-        return "Hello World";
+    public User test() {
+        return userRepo.findById(1);
     }
 
     @PostMapping("/registerUser")
