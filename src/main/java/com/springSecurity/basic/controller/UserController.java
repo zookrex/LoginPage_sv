@@ -8,7 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(value = "/api")
+@RequestMapping(value = "/login")
 public class UserController {
 
     private final UserRepo userRepo;
@@ -19,16 +19,20 @@ public class UserController {
         this.userRepo = userRepo;
 
     }
-    @GetMapping("/api1")
+    @GetMapping("/test")
     public User test() {
         return userRepo.findById(1);
     }
 
-    @PostMapping("/registerUser")
-    public ResponseEntity<User> userRegistration(@RequestBody User user) {
-        User userWithRole = userService.setUserRole(user);
-        userRepo.save(userWithRole);
-        return ResponseEntity.ok().build();
+
+
+    @PostMapping("/userLogin")
+    public ResponseEntity<User> userLogin(@RequestBody User userData) {
+        User user=userService.authenticate(userData.getUsername(), userData.getPassword());
+        if(user!=null) {
+            return ResponseEntity.ok().build();
+        }
+        return ResponseEntity.badRequest().body(user);
     }
 
 

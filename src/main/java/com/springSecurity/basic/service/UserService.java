@@ -3,9 +3,8 @@ package com.springSecurity.basic.service;
 import com.springSecurity.basic.entity.Roles;
 import com.springSecurity.basic.entity.User;
 import com.springSecurity.basic.repo.RolesRepo;
-import lombok.NoArgsConstructor;
+import com.springSecurity.basic.repo.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,12 +23,23 @@ public class UserService {
         this.rolesRepo = rolesRepo;
     }
 
-    public User setUserRole(User user) {
+    @Autowired
+    UserRepo userRepo;
+
+    public User setRoleForNewUser(User user) {
         Set<Roles> roles = new HashSet<>();
         roles.add(rolesRepo.findById(1));
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         user.setRoles(roles);
         return user;
+    }
+
+    public User authenticate(String username, String password) {
+        User user= userRepo.findByUsername(username);
+        if(passwordEncoder.matches(password,user.getPassword())){
+            return user;
+        }
+        return null;
     }
 }

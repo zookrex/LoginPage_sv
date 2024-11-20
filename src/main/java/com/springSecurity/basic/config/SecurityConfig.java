@@ -40,8 +40,8 @@ public class SecurityConfig {
 //    @Bean
 //    public UserDetailsService userDetailsService() {
 //        UserDetails arzoo= User.builder()
-//                .username("arzoo")
-//                .password(passwordEncoder().encode("john"))
+//                .username("arzoo1")
+//                .password(passwordEncoder().encode("zoo"))
 //                .roles("ADMIN")
 //                .build();
 //        return new InMemoryUserDetailsManager(arzoo);
@@ -49,12 +49,18 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(auth->{
-//                    auth.requestMatchers("/api/**").permitAll();
-                    auth.anyRequest().authenticated();
-                }).cors(withDefaults()).httpBasic(withDefaults());
-
+        if(true){
+            http.csrf(AbstractHttpConfigurer::disable)
+                    .authorizeHttpRequests(auth->{
+                        auth.requestMatchers("/login/**").permitAll();
+                        auth.requestMatchers("/register/**").permitAll();
+                        auth.anyRequest().authenticated();
+                    }).cors(withDefaults()).httpBasic(withDefaults());
+        }else{
+            http.authorizeHttpRequests(auth->{
+                auth.anyRequest().permitAll();
+            });
+        }
 
     return http.build();
     }
@@ -71,7 +77,7 @@ public class SecurityConfig {
         corsConfig.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         corsConfig.setAllowCredentials(true);
-        corsConfig.setMaxAge(36000L); // 1 hour
+        corsConfig.setMaxAge(36000L);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", corsConfig);
